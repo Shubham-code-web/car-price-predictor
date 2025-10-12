@@ -1,11 +1,11 @@
 PricePilot.ai - AI-Powered Car Price Predictor
 PricePilot.ai is a modern, responsive, and user-friendly web application designed to provide instant and accurate price valuations for used cars. It leverages a sophisticated, multi-step form and integrates with Google's Gemini AI to offer users not just a price, but a comprehensive understanding of their car's market value and condition.
 
-🌐 LIVE DEMO
+🌐 Live Demo:-
 
 You can view a live version of the project here: https://g.co/gemini/share/c32bedeee517
 
-✨ Key Features
+✨ Key Features:-
 
 Multi-Step Valuation Form: An intuitive, step-by-step process to gather detailed information about a vehicle (Make, Model, Year, Condition, Location).
 
@@ -31,7 +31,7 @@ AI Maintenance Advisor: Offers crucial maintenance tips and highlights common is
 
 Fully Responsive Design: A clean and modern UI that works flawlessly on desktops, tablets, and mobile devices.
 
-🛠️ Technology Stack
+🛠️ Technology Stack:-
 
 This project is built as a single, self-contained frontend application, making it lightweight and easily portable.
 
@@ -48,6 +48,7 @@ AI & APIs:
 Google Gemini API: The gemini-2.5-flash-preview-05-20 model is used for the "AI-Powered Insights" features.
 
 ✏️ How can I edit this code?
+
 
 Editing this project is straightforward because the entire website is contained within a single index.html file.
 
@@ -67,6 +68,7 @@ Save and Preview: After making your changes, simply save the index.html file. Yo
 
 🚀 How can I deploy this project?
 
+
 Since this is a self-contained HTML file, running it is incredibly simple:
 
 Ensure you have the index.html file.
@@ -77,13 +79,13 @@ The website will be fully functional locally.
 
 Note: The Gemini API calls are made directly from the client-side. In a production environment, it is best practice to handle API keys and calls through a secure backend server.
 
-📂 File Structure
+📂 File Structure:-
 
 The entire application is encapsulated within a single file for simplicity:
 
 index.html: Contains the HTML structure, the CSS styles within <style> tags (using Tailwind CSS via a CDN), and all the JavaScript logic within <script> tags.
 
-🔮 Future Improvements
+🔮 Future Improvements:-
 
 While the current version is a powerful demonstration, future enhancements could include:
 
