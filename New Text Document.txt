@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PricePilot.ai - Car Price Predictor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .hero-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1553440569-bcc63803a83d?q=80&w=2025&auto=format&fit=crop') no-repeat center center;
+            background-size: cover;
+        }
+        .form-step {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .form-step.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            position: absolute;
+            pointer-events: none;
+        }
+        .loader {
+            border-top-color: #3498db;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        /* For Gemini output formatting */
+        #gemini-content h3 {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            margin-bottom: 0.5rem; /* mb-2 */
+        }
+        #gemini-content ul {
+            list-style-position: inside;
+            list-style-type: disc;
+            padding-left: 0.5rem; /* pl-2 */
+            margin-bottom: 1rem; /* mb-4 */
+        }
+         #gemini-content p {
+            margin-bottom: 1rem; /* mb-4 */
+         }
+        .brand-logo {
+            padding: 0.25rem;
+            transition: all 0.3s ease-in-out;
+        }
+        .brand-logo.selected {
+            transform: scale(1.15);
+            border: 2px solid #2563EB; /* blue-600 */
+            border-radius: 8px;
+            background-color: #EFF6FF; /* blue-50 */
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+        }
+        .brand-logo.faded {
+            opacity: 0.4;
+            transform: scale(0.9);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-gray-900">PricePilot<span class="text-blue-600">.ai</span></a>
+            <div>
+                <a href="#how-it-works" class="text-gray-600 hover:text-blue-600 px-3 py-2">How It Works</a>
+                <a href="#why-us" class="text-gray-600 hover:text-blue-600 px-3 py-2">Why Us?</a>
+                <a href="#" class="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition duration-300 ml-2">Sell My Car</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-bg text-white">
+            <div class="container mx-auto px-6 py-24 md:py-32 text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4">Know Your Car's True Worth in Seconds.</h1>
+                <p class="text-lg md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto">Our AI-powered engine analyzes millions of data points to give you a transparent, hyper-local valuation for your car.</p>
+                
+                <!-- Prediction Form Card -->
+                <div id="prediction-card" class="bg-white text-gray-800 rounded-xl shadow-2xl max-w-4xl mx-auto p-6 md:p-8 text-left">
+                    <div id="form-container">
+                        <form id="prediction-form" class="relative overflow-hidden">
+                            <!-- Step 1: Basic Details -->
+                            <div id="step-1" class="form-step">
+                                <h3 class="text-xl font-semibold mb-4 text-center">Step 1: Tell us about your car</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="make" class="block text-sm font-medium text-gray-700">Make</label>
+                                        <select id="make" name="make" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm">
+                                            <option value="">Select Make</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="model" class="block text-sm font-medium text-gray-700">Model</label>
+                                        <select id="model" name="model" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm" disabled>
+                                            <option>Select Make First</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="year" class="block text-sm font-medium text-gray-700">Year of Registration</label>
+                                        <select id="year" name="year" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm">
+                                            <option value="">Select Year</option>
+                                        </select>
+                                    </div>
+                                     <div>
+                                        <label for="variant" class="block text-sm font-medium text-gray-700">Variant</label>
+                                        <select id="variant" name="variant" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm" disabled>
+                                            <option>Select Model First</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mt-6 text-right">
+                                    <button type="button" id="next-step-1" class="bg-blue-600 text-white rounded-lg px-6 py-2 font-semibold hover:bg-blue-700 transition duration-300">Next &rarr;</button>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Car Condition -->
+                            <div id="step-2" class="form-step hidden">
+                                <h3 class="text-xl font-semibold mb-4 text-center">Step 2: A bit more about its condition</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="km-driven" class="block text-sm font-medium text-gray-700">Kilometers Driven</label>
+                                        <input type="number" id="km-driven" placeholder="e.g., 45000" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm">
+                                    </div>
+                                     <div>
+                                        <label for="fuel-type" class="block text-sm font-medium text-gray-700">Fuel Type</label>
+                                        <select id="fuel-type" name="fuel-type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm">
+                                            <option>Petrol</option>
+                                            <option>Diesel</option>
+                                            <option>CNG</option>
+                                            <option>Electric</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="transmission" class="block text-sm font-medium text-gray-700">Transmission</label>
+                                        <select id="transmission" name="transmission" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm">
+                                            <option>Manual</option>
+                                            <option>Automatic</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="owner" class="block text-sm font-medium text-gray-700">Owner</label>
+                                        <select id="owner" name="owner" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm">
+                                            <option>1st Owner</option>
+                                            <option>2nd Owner</option>
+                                            <option>3rd Owner</option>
+                                            <option>4th+ Owner</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mt-6 flex justify-between">
+                                    <button type="button" id="prev-step-2" class="bg-gray-200 text-gray-800 rounded-lg px-6 py-2 font-semibold hover:bg-gray-300 transition duration-300">&larr; Back</button>
+                                    <button type="button" id="next-step-2" class="bg-blue-600 text-white rounded-lg px-6 py-2 font-semibold hover:bg-blue-700 transition duration-300">Next &rarr;</button>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Location -->
+                            <div id="step-3" class="form-step hidden">
+                                <h3 class="text-xl font-semibold mb-4 text-center">Step 3: Where is the car located?</h3>
+                                <div class="grid grid-cols-1 gap-4">
+                                     <div>
+                                        <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                                        <select id="city" name="city" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm">
+                                            <option>Mumbai</option>
+                                            <option>Delhi</option>
+                                            <option>Bangalore</option>
+                                            <option>Chennai</option>
+                                            <option>Kolkata</option>
+                                            <option>Hyderabad</option>
+                                            <option>Pune</option>
+                                            <option>Ahmedabad</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mt-6 flex justify-between">
+                                    <button type="button" id="prev-step-3" class="bg-gray-200 text-gray-800 rounded-lg px-6 py-2 font-semibold hover:bg-gray-300 transition duration-300">&larr; Back</button>
+                                    <button type="button" id="calculate-price" class="bg-green-600 text-white rounded-lg px-6 py-3 font-bold text-lg hover:bg-green-700 transition duration-300 w-full md:w-auto">Calculate My Car's Value</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Loader -->
+                    <div id="loader" class="hidden flex flex-col items-center justify-center p-8">
+                        <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-24 w-24 mb-4"></div>
+                        <p class="text-lg font-semibold text-gray-700">Analyzing Market Data...</p>
+                        <p class="text-gray-500">Please wait while our AI finds the perfect price.</p>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div id="results-container" class="hidden">
+                        <div class="text-center mb-6">
+                            <p class="text-gray-600">Valuation for:</p>
+                            <h2 id="result-car-title" class="text-2xl font-bold text-gray-900">2021 Maruti Suzuki Swift VXi</h2>
+                        </div>
+
+                        <div class="bg-blue-50 border-2 border-dashed border-blue-200 rounded-lg p-6 mb-6 text-center">
+                            <p class="text-sm font-medium text-blue-800">Fair Private Seller Price</p>
+                            <p id="private-price" class="text-4xl md:text-5xl font-extrabold text-blue-900 my-2">₹ 6,45,000</p>
+                            <p class="text-gray-600">This is the sweet spot for selling to an individual.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-center">
+                            <div class="bg-gray-100 p-4 rounded-lg">
+                                <p class="font-semibold">Instant Sell Price</p>
+                                <p id="instant-price" class="text-2xl font-bold text-gray-800">₹ 5,90,000</p>
+                                <p class="text-sm text-gray-500">For a quick sale to a dealer</p>
+                            </div>
+                             <div class="bg-gray-100 p-4 rounded-lg">
+                                <p class="font-semibold">Dealer Retail Price</p>
+                                <p id="dealer-price" class="text-2xl font-bold text-gray-800">₹ 7,10,000</p>
+                                <p class="text-sm text-gray-500">What you'd pay at a dealership</p>
+                            </div>
+                        </div>
+
+                        <h3 class="text-xl font-semibold mb-4 text-center">The 'Why' Behind the Price</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <h4 class="font-semibold text-green-800 mb-2">Value Boosters</h4>
+                                <ul id="value-boosters" class="space-y-2 text-green-700">
+                                    <!-- Dynamic content here -->
+                                </ul>
+                            </div>
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                                <h4 class="font-semibold text-red-800 mb-2">Value Reducers</h4>
+                                <ul id="value-reducers" class="space-y-2 text-red-700">
+                                     <!-- Dynamic content here -->
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Gemini AI Features Section -->
+                        <div class="mt-8 pt-6 border-t border-gray-200">
+                            <h3 class="text-xl font-semibold mb-4 text-center">✨ AI-Powered Insights ✨</h3>
+                            <div id="gemini-buttons" class="flex flex-col md:flex-row gap-4 justify-center mb-6">
+                                <button id="generate-pitch-btn" class="bg-purple-600 text-white rounded-lg px-5 py-2 font-semibold hover:bg-purple-700 transition duration-300">Generate Sales Pitch</button>
+                                <button id="get-maintenance-btn" class="bg-teal-600 text-white rounded-lg px-5 py-2 font-semibold hover:bg-teal-700 transition duration-300">Get Maintenance Tips</button>
+                            </div>
+                            <div id="gemini-output-container" class="hidden min-h-[150px] bg-gray-100 rounded-lg p-4 relative">
+                                <!-- Gemini Loader -->
+                                <div id="gemini-loader" class="hidden absolute inset-0 bg-gray-100 bg-opacity-80 flex flex-col items-center justify-center">
+                                    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-2"></div>
+                                    <p class="text-gray-600">✨ Gemini is thinking...</p>
+                                </div>
+                                <!-- Gemini Content -->
+                                <div id="gemini-content-wrapper">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <h4 id="gemini-title" class="font-bold text-gray-800"></h4>
+                                        <button id="copy-gemini-btn" class="hidden bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded hover:bg-gray-300">Copy</button>
+                                    </div>
+                                    <div id="gemini-content" class="text-gray-700 text-sm"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-8">
+                           <button id="recalculate" class="bg-blue-600 text-white rounded-lg px-8 py-3 font-semibold hover:bg-blue-700 transition duration-300">Start a New Valuation</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="py-16 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl font-bold mb-2">Simple Steps, Accurate Results</h2>
+                <p class="text-gray-600 mb-12">Here’s how our AI finds your car’s true value.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="p-6">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 text-blue-600 mx-auto mb-4 text-2xl font-bold">1</div>
+                        <h3 class="text-xl font-semibold mb-2">Provide Details</h3>
+                        <p class="text-gray-500">Enter your car's make, model, year, and condition. The more details, the better the accuracy.</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 text-blue-600 mx-auto mb-4 text-2xl font-bold">2</div>
+                        <h3 class="text-xl font-semibold mb-2">AI Analysis</h3>
+                        <p class="text-gray-500">Our model instantly compares your car to millions of market listings and recent sales data in your city.</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 text-blue-600 mx-auto mb-4 text-2xl font-bold">3</div>
+                        <h3 class="text-xl font-semibold mb-2">Get Instant Valuation</h3>
+                        <p class="text-gray-500">Receive a transparent report with a fair market price, dealer price, and the factors affecting the value.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Us Section -->
+        <section id="why-us" class="py-16 bg-gray-50">
+             <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl font-bold mb-2">Why Trust PricePilot.ai?</h2>
+                <p class="text-gray-600 mb-12">We provide more than just a number.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                         <h3 class="text-lg font-semibold mb-2">Transparent AI</h3>
+                        <p class="text-gray-500">We show you exactly which factors are raising or lowering your car's price.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow">
+                         <h3 class="text-lg font-semibold mb-2">Hyper-Local</h3>
+                        <p class="text-gray-500">Valuations are tailored to your specific city's market, not national averages.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow">
+                         <h3 class="text-lg font-semibold mb-2">Real-Time Data</h3>
+                        <p class="text-gray-500">Our AI is constantly learning from the latest listings and sales data.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow">
+                         <h3 class="text-lg font-semibold mb-2">Completely Free</h3>
+                        <p class="text-gray-500">Get unlimited, detailed car valuations at no cost, with no hidden charges.</p>
+                    </div>
+                </div>
+             </div>
+        </section>
+
+        <!-- Brands We Cover Section -->
+        <section id="brands" class="py-16 bg-white">
+             <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl font-bold mb-2">Brands We Cover</h2>
+                <p class="text-gray-600 mb-12">Click a logo to start your valuation instantly.</p>
+                <div class="flex flex-wrap justify-center items-center gap-x-8 md:gap-x-12 gap-y-8">
+                    <img src="https://cdn.simpleicons.org/marutisuzuki/1E4E9C" alt="Maruti Suzuki Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Maruti Suzuki" data-brand="Maruti Suzuki">
+                    <img src="https://cdn.simpleicons.org/hyundai/002C5F" alt="Hyundai Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Hyundai" data-brand="Hyundai">
+                    <img src="https://cdn.simpleicons.org/tatamotors/003359" alt="Tata Motors Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Tata" data-brand="Tata">
+                    <img src="https://cdn.simpleicons.org/mahindra/E52221" alt="Mahindra Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Mahindra" data-brand="Mahindra">
+                    <img src="https://cdn.simpleicons.org/kia/000000" alt="Kia Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Kia" data-brand="Kia">
+                    <img src="https://cdn.simpleicons.org/toyota/EB0A1E" alt="Toyota Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Toyota" data-brand="Toyota">
+                    <img src="https://cdn.simpleicons.org/honda/E4002B" alt="Honda Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Honda" data-brand="Honda">
+                </div>
+             </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p class="text-lg font-semibold">PricePilot<span class="text-blue-400">.ai</span></p>
+            <p class="text-gray-400 mt-2">&copy; 2025 PricePilot.ai. All Rights Reserved.</p>
+            <p class="text-gray-500 text-sm mt-2">Disclaimer: All valuations are estimates based on market data and should be used as a guide.</p>
+        </div>
+    </footer>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // --- STATE ---
+    let currentCarData = {};
+    let currentCarBoosters = [];
+
+    // --- DATA ---
+    const detailedCarData = {
+        'Maruti Suzuki': {
+            'Swift': ['LXi', 'VXi', 'VXi (O)', 'ZXi', 'ZXi+'],
+            'Baleno': ['Sigma', 'Delta', 'Zeta', 'Alpha'],
+            'Alto': ['Std', 'LXi', 'VXi', 'VXi+'],
+            'Wagon R': ['LXi', 'VXi', 'ZXi'],
+            'Brezza': ['LXi', 'VXi', 'ZXi', 'ZXi+'],
+            'Dzire': ['LXi', 'VXi', 'ZXi', 'ZXi+']
+        },
+        'Hyundai': {
+            'i20': ['Magna', 'Sportz', 'Asta', 'Asta (O)'],
+            'Creta': ['E', 'EX', 'S', 'SX', 'SX(O)'],
+            'Venue': ['E', 'S', 'S(O)', 'SX'],
+            'Verna': ['EX', 'S', 'SX', 'SX(O)'],
+            'Grand i10': ['Era', 'Magna', 'Sportz', 'Asta']
+        },
+        'Tata': {
+            'Nexon': ['XE', 'XM', 'XZ', 'XZ+'],
+            'Punch': ['Pure', 'Adventure', 'Accomplished', 'Creative'],
+            'Altroz': ['XE', 'XM', 'XT', 'XZ'],
+            'Harrier': ['XE', 'XM', 'XT', 'XZ', 'XZ+'],
+            'Safari': ['XE', 'XM', 'XT', 'XZ', 'XZ+'],
+            'Tiago': ['XE', 'XT', 'XZ', 'XZ+']
+        },
+        'Mahindra': {
+            'Scorpio': ['S3+', 'S5', 'S7', 'S11'],
+            'XUV700': ['MX', 'AX3', 'AX5', 'AX7'],
+            'Thar': ['AX(O)', 'LX'],
+            'XUV300': ['W4', 'W6', 'W8', 'W8(O)']
+        },
+        'Kia': {
+            'Seltos': ['HTE', 'HTK', 'HTK+', 'HTX', 'HTX+'],
+            'Sonet': ['HTE', 'HTK', 'HTK+', 'HTX', 'HTX+'],
+            'Carens': ['Premium', 'Prestige', 'Luxury', 'Luxury Plus']
+        },
+        'Toyota': {
+            'Fortuner': ['4x2 MT', '4x2 AT', '4x4 MT', '4x4 AT', 'Legender'],
+            'Innova Crysta': ['G', 'GX', 'VX', 'ZX'],
+            'Glanza': ['E', 'S', 'G', 'V']
+        },
+        'Honda': {
+            'City': ['V', 'VX', 'ZX'],
+            'Amaze': ['E', 'S', 'VX']
+        }
+    };
+
+    const basePrices = { // Base price for a 5-year-old model with 50k km
+        'Swift': 500000, 'Baleno': 600000, 'Alto': 250000, 'Wagon R': 350000, 'Brezza': 750000, 'Dzire': 550000,
+        'i20': 650000, 'Creta': 900000, 'Venue': 700000, 'Verna': 800000, 'Grand i10': 450000,
+        'Nexon': 700000, 'Punch': 550000, 'Altroz': 600000, 'Harrier': 1300000, 'Safari': 1400000, 'Tiago': 400000,
+        'Scorpio': 1200000, 'XUV700': 1500000, 'Thar': 1300000, 'XUV300': 800000,
+        'Seltos': 950000, 'Sonet': 750000, 'Carens': 1000000,
+        'Fortuner': 2500000, 'Innova Crysta': 1600000, 'Glanza': 620000,
+        'City': 850000, 'Amaze': 550000
+    };
+
+
+    // --- DOM ELEMENTS ---
+    const makeSelect = document.getElementById('make');
+    const modelSelect = document.getElementById('model');
+    const yearSelect = document.getElementById('year');
+    const variantSelect = document.getElementById('variant');
+    const steps = [document.getElementById('step-1'), document.getElementById('step-2'), document.getElementById('step-3')];
+    const nextButtons = [document.getElementById('next-step-1'), document.getElementById('next-step-2')];
+    const prevButtons = [document.getElementById('prev-step-2'), document.getElementById('prev-step-3')];
+    const calculateBtn = document.getElementById('calculate-price');
+    const recalculateBtn = document.getElementById('recalculate');
+    const predictionCard = document.getElementById('prediction-card');
+    const formContainer = document.getElementById('form-container');
+    const loader = document.getElementById('loader');
+    const resultsContainer = document.getElementById('results-container');
+    const resultCarTitle = document.getElementById('result-car-title');
+    const privatePriceEl = document.getElementById('private-price');
+    const instantPriceEl = document.getElementById('instant-price');
+    const dealerPriceEl = document.getElementById('dealer-price');
+    const valueBoostersEl = document.getElementById('value-boosters');
+    const valueReducersEl = document.getElementById('value-reducers');
+    // Gemini elements
+    const generatePitchBtn = document.getElementById('generate-pitch-btn');
+    const getMaintenanceBtn = document.getElementById('get-maintenance-btn');
+    const geminiOutputContainer = document.getElementById('gemini-output-container');
+    const geminiLoader = document.getElementById('gemini-loader');
+    const geminiContentWrapper = document.getElementById('gemini-content-wrapper');
+    const geminiTitle = document.getElementById('gemini-title');
+    const geminiContent = document.getElementById('gemini-content');
+    const copyGeminiBtn = document.getElementById('copy-gemini-btn');
+
+
+    // --- INITIALIZATION ---
+    function initialize() {
+        populateMakes();
+        populateYears();
+        setupEventListeners();
+    }
+
+    function populateMakes() {
+        const makes = Object.keys(detailedCarData);
+        for (const make of makes) {
+            const option = document.createElement('option');
+            option.value = make;
+            option.textContent = make;
+            makeSelect.appendChild(option);
+        }
+    }
+
+    function populateYears() {
+        const currentYear = new Date().getFullYear();
+        for (let i = 0; i < 20; i++) {
+            const year = currentYear - i;
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            yearSelect.appendChild(option);
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    function setupEventListeners() {
+        makeSelect.addEventListener('change', populateModels);
+        modelSelect.addEventListener('change', populateVariants);
+
+        nextButtons.forEach((button, index) => {
+            button.addEventListener('click', () => navigateToStep(index + 1));
+        });
+
+        prevButtons.forEach((button, index) => {
+            button.addEventListener('click', () => navigateToStep(index));
+        });
+        
+        calculateBtn.addEventListener('click', handleCalculation);
+        recalculateBtn.addEventListener('click', resetForm);
+        generatePitchBtn.addEventListener('click', handleGeneratePitch);
+        getMaintenanceBtn.addEventListener('click', handleGetMaintenance);
+        copyGeminiBtn.addEventListener('click', copyGeminiContent);
+
+        document.querySelectorAll('.brand-logo').forEach(logo => {
+            logo.addEventListener('click', handleBrandLogoClick);
+        });
+    }
+    
+    // --- FORM LOGIC ---
+    function updateLogoSelection(selectedBrand = "") {
+        document.querySelectorAll('.brand-logo').forEach(logo => {
+            const brand = logo.dataset.brand;
+            if (selectedBrand && brand === selectedBrand) {
+                logo.classList.add('selected');
+                logo.classList.remove('faded');
+            } else if (selectedBrand) {
+                logo.classList.add('faded');
+                logo.classList.remove('selected');
+            } else {
+                // No brand selected, reset all logos
+                logo.classList.remove('selected', 'faded');
+            }
+        });
+    }
+
+    function populateModels() {
+        const selectedMake = makeSelect.value;
+        updateLogoSelection(selectedMake);
+
+        modelSelect.innerHTML = '<option value="">Select Model</option>';
+        variantSelect.innerHTML = '<option value="">Select Model First</option>';
+        modelSelect.disabled = true;
+        variantSelect.disabled = true;
+
+        if (selectedMake && detailedCarData[selectedMake]) {
+            const models = Object.keys(detailedCarData[selectedMake]);
+            models.forEach(model => {
+                const option = document.createElement('option');
+                option.value = model;
+                option.textContent = model;
+                modelSelect.appendChild(option);
+            });
+            modelSelect.disabled = false;
+        }
+    }
+
+    function handleBrandLogoClick(event) {
+        const brand = event.currentTarget.dataset.brand;
+        if (brand) {
+            makeSelect.value = brand;
+            populateModels(); 
+            predictionCard.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    function populateVariants() {
+        const selectedMake = makeSelect.value;
+        const selectedModel = modelSelect.value;
+        variantSelect.innerHTML = '<option value="">Select Variant</option>';
+        variantSelect.disabled = true;
+
+        if (selectedMake && selectedModel && detailedCarData[selectedMake][selectedModel]) {
+            const variants = detailedCarData[selectedMake][selectedModel];
+            variants.forEach(variant => {
+                const option = document.createElement('option');
+                option.value = variant;
+                option.textContent = variant;
+                variantSelect.appendChild(option);
+            });
+            variantSelect.disabled = false;
+        }
+    }
+
+    function navigateToStep(stepIndex) {
+        steps.forEach((step, index) => {
+            step.classList.toggle('hidden', index !== stepIndex);
+        });
+    }
+
+    function resetForm() {
+        // Hide results, show form
+        resultsContainer.classList.add('hidden');
+        formContainer.classList.remove('hidden');
+
+        // Reset form inputs
+        document.getElementById('prediction-form').reset();
+        
+        // Reset dynamic dropdowns and logos
+        populateModels(); 
+
+        // Reset to first step
+        navigateToStep(0);
+        
+        // Hide Gemini output
+        geminiOutputContainer.classList.add('hidden');
+    }
+    
+    // --- CALCULATION LOGIC ---
+    function handleCalculation() {
+        // Collect data from form
+        const carDetails = {
+            make: document.getElementById('make').value,
+            model: document.getElementById('model').value,
+            year: parseInt(document.getElementById('year').value, 10),
+            variant: document.getElementById('variant').value,
+            kmDriven: parseInt(document.getElementById('km-driven').value, 10),
+            fuelType: document.getElementById('fuel-type').value,
+            transmission: document.getElementById('transmission').value,
+            owner: document.getElementById('owner').value,
+            city: document.getElementById('city').value,
+        };
+        currentCarData = carDetails;
+
+        // Simple validation
+        if (!carDetails.make || !carDetails.model || !carDetails.year || !carDetails.kmDriven) {
+            alert('Please fill in all the required fields.');
+            return;
+        }
+
+        // Show loader, hide form
+        formContainer.classList.add('hidden');
+        loader.classList.remove('hidden');
+
+        setTimeout(() => {
+            const valuation = calculatePrice(carDetails);
+            displayResults(carDetails, valuation);
+            loader.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+        }, 1500);
+    }
+
+    function calculatePrice(details) {
+        let price = basePrices[details.model] || 600000; // Fallback price
+        let boosters = [];
+        let reducers = [];
+
+        // Year depreciation
+        const age = new Date().getFullYear() - details.year;
+        const yearDepreciation = age * (price * 0.06);
+        price -= yearDepreciation;
+        if (age < 3) boosters.push(`Relatively New (${details.year} model)`);
+        else if (age > 7) reducers.push(`Older Model (${details.year})`);
+
+        // KM driven
+        const kmFactor = (details.kmDriven - 50000) * 2;
+        price -= kmFactor;
+        if (details.kmDriven < 30000) boosters.push(`Low Kilometers Driven (${details.kmDriven.toLocaleString()} km)`);
+        if (details.kmDriven > 80000) reducers.push(`High Kilometers Driven (${details.kmDriven.toLocaleString()} km)`);
+
+        // Owner
+        const ownerMap = { '1st Owner': 1, '2nd Owner': 0.9, '3rd Owner': 0.8, '4th+ Owner': 0.7 };
+        price *= (ownerMap[details.owner] || 0.9);
+        if(details.owner === '1st Owner') boosters.push('First Owner');
+        else reducers.push(details.owner);
+
+        // Fuel Type
+        if (details.fuelType === 'Diesel' && (details.model === 'Creta' || details.model === 'Fortuner')) {
+            price *= 1.05;
+            boosters.push('High-Demand Diesel Variant');
+        }
+
+        // Transmission
+        if (details.transmission === 'Automatic') {
+            price *= 1.08;
+            boosters.push('Automatic Transmission');
+        }
+
+        // City factor (simplified)
+        const cityFactors = { 'Mumbai': 1.05, 'Bangalore': 1.03, 'Delhi': 1.02 };
+        price *= (cityFactors[details.city] || 1);
+
+        currentCarBoosters = boosters;
+
+        return {
+            privatePrice: Math.round(price / 1000) * 1000,
+            boosters,
+            reducers
+        };
+    }
+
+    function displayResults(details, valuation) {
+        resultCarTitle.textContent = `${details.year} ${details.make} ${details.model} ${details.variant}`;
+        const privatePrice = valuation.privatePrice;
+        privatePriceEl.textContent = `₹ ${privatePrice.toLocaleString('en-IN')}`;
+        instantPriceEl.textContent = `₹ ${(Math.round(privatePrice * 0.92 / 1000) * 1000).toLocaleString('en-IN')}`;
+        dealerPriceEl.textContent = `₹ ${(Math.round(privatePrice * 1.1 / 1000) * 1000).toLocaleString('en-IN')}`;
+        
+        valueBoostersEl.innerHTML = valuation.boosters.map(b => `<li>✅ ${b}</li>`).join('');
+        valueReducersEl.innerHTML = valuation.reducers.map(r => `<li>❌ ${r}</li>`).join('');
+    }
+
+    // --- GEMINI API LOGIC ---
+    async function handleGeneratePitch() {
+        const prompt = `Generate a compelling and creative sales pitch for a used car. The car is a ${currentCarData.year} ${currentCarData.make} ${currentCarData.model} ${currentCarData.variant} with ${currentCarData.kmDriven} km driven. It is a ${currentCarData.owner} car. Highlight its key strengths like: ${currentCarBoosters.join(', ')}. Make it sound appealing to a potential buyer on a marketplace. Start with a catchy headline.`;
+        geminiTitle.textContent = "AI-Generated Sales Pitch";
+        await callGeminiApi(prompt);
+    }
+
+    async function handleGetMaintenance() {
+        const prompt = `Provide essential maintenance tips for a ${currentCarData.year} ${currentCarData.make} ${currentCarData.model}. The car has run ${currentCarData.kmDriven} km. List 3-4 common issues to look out for with this specific model and age, and suggest preventative checks a buyer or owner should perform. Format the response with clear headings.`;
+        geminiTitle.textContent = "AI Maintenance Advisor";
+        await callGeminiApi(prompt);
+    }
+    
+    async function callGeminiApi(prompt) {
+        geminiOutputContainer.classList.remove('hidden');
+        geminiContentWrapper.classList.add('hidden');
+        geminiLoader.classList.remove('hidden');
+        copyGeminiBtn.classList.add('hidden');
+
+        const apiKey = ""; // Leave empty, handled by environment
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+        
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            if (!response.ok) throw new Error(`API Error: ${response.status}`);
+            const result = await response.json();
+            const text = result.candidates[0].content.parts[0].text;
+            
+            // Basic markdown to HTML conversion
+            let htmlContent = text
+                .replace(/\*\*(.*?)\*\*/g, '<h3>$1</h3>') // Bold to h3
+                .replace(/\n/g, '<br>'); // Newlines to breaks
+
+            geminiContent.innerHTML = htmlContent;
+
+        } catch (error) {
+            console.error("Gemini API call failed:", error);
+            geminiContent.textContent = "Sorry, we couldn't fetch AI insights at the moment. Please try again later.";
+        } finally {
+            geminiLoader.classList.add('hidden');
+            geminiContentWrapper.classList.remove('hidden');
+            copyGeminiBtn.classList.remove('hidden');
+        }
+    }
+
+    function copyGeminiContent() {
+        const textToCopy = geminiContent.innerText;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            copyGeminiBtn.textContent = 'Copied!';
+            setTimeout(() => { copyGeminiBtn.textContent = 'Copy'; }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+            // Fallback for older browsers
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                copyGeminiBtn.textContent = 'Copied!';
+                setTimeout(() => { copyGeminiBtn.textContent = 'Copy'; }, 2000);
+            } catch (e) {
+                alert("Failed to copy content.");
+            }
+        });
+    }
+
+    // --- KICK THINGS OFF ---
+    initialize();
+});
+</script>
+
+</body>
+</html>
+
