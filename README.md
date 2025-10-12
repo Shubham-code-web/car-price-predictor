@@ -2,9 +2,11 @@ PricePilot.ai - AI-Powered Car Price Predictor
 PricePilot.ai is a modern, responsive, and user-friendly web application designed to provide instant and accurate price valuations for used cars. It leverages a sophisticated, multi-step form and integrates with Google's Gemini AI to offer users not just a price, but a comprehensive understanding of their car's market value and condition.
 
 🌐 Live Demo
+
 You can view a live version of the project here: https://g.co/gemini/share/c32bedeee517
 
 ✨ Key Features
+
 Multi-Step Valuation Form: An intuitive, step-by-step process to gather detailed information about a vehicle (Make, Model, Year, Condition, Location).
 
 Dynamic & Dependent Dropdowns: The selection of a car's 'Make' intelligently populates the 'Model' and 'Variant' fields, ensuring data accuracy and a smooth user experience.
