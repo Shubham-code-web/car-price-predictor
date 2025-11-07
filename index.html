@@ -92,7 +92,7 @@
                 <!-- Prediction Form Card -->
                 <div id="prediction-card" class="bg-white text-gray-800 rounded-xl shadow-2xl max-w-4xl mx-auto p-6 md:p-8 text-left">
                     <div id="form-container">
-                        <form id="prediction-form" class="relative overflow-hidden">
+                        <div class="relative overflow-hidden">
                             <!-- Step 1: Basic Details -->
                             <div id="step-1" class="form-step">
                                 <h3 class="text-xl font-semibold mb-4 text-center">Step 1: Tell us about your car</h3>
@@ -123,7 +123,7 @@
                                     </div>
                                 </div>
                                 <div class="mt-6 text-right">
-                                    <button type="button" id="next-step-1" class="bg-blue-600 text-white rounded-lg px-6 py-2 font-semibold hover:bg-blue-700 transition duration-300">Next &rarr;</button>
+                                    <button id="next-step-1" class="bg-blue-600 text-white rounded-lg px-6 py-2 font-semibold hover:bg-blue-700 transition duration-300">Next &rarr;</button>
                                 </div>
                             </div>
 
@@ -162,8 +162,8 @@
                                     </div>
                                 </div>
                                 <div class="mt-6 flex justify-between">
-                                    <button type="button" id="prev-step-2" class="bg-gray-200 text-gray-800 rounded-lg px-6 py-2 font-semibold hover:bg-gray-300 transition duration-300">&larr; Back</button>
-                                    <button type="button" id="next-step-2" class="bg-blue-600 text-white rounded-lg px-6 py-2 font-semibold hover:bg-blue-700 transition duration-300">Next &rarr;</button>
+                                    <button id="prev-step-2" class="bg-gray-200 text-gray-800 rounded-lg px-6 py-2 font-semibold hover:bg-gray-300 transition duration-300">&larr; Back</button>
+                                    <button id="next-step-2" class="bg-blue-600 text-white rounded-lg px-6 py-2 font-semibold hover:bg-blue-700 transition duration-300">Next &rarr;</button>
                                 </div>
                             </div>
 
@@ -182,15 +182,22 @@
                                             <option>Hyderabad</option>
                                             <option>Pune</option>
                                             <option>Ahmedabad</option>
+                                            <!-- Added Cities -->
+                                            <option>Lucknow</option>
+                                            <option>Kanpur</option>
+                                            <option>Padrauna</option>
+                                            <option>Patna</option>
+                                            <option>Gangtok</option>
+                                            <option>Jaipur</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="mt-6 flex justify-between">
-                                    <button type="button" id="prev-step-3" class="bg-gray-200 text-gray-800 rounded-lg px-6 py-2 font-semibold hover:bg-gray-300 transition duration-300">&larr; Back</button>
-                                    <button type="button" id="calculate-price" class="bg-green-600 text-white rounded-lg px-6 py-3 font-bold text-lg hover:bg-green-700 transition duration-300 w-full md:w-auto">Calculate My Car's Value</button>
+                                    <button id="prev-step-3" class="bg-gray-200 text-gray-800 rounded-lg px-6 py-2 font-semibold hover:bg-gray-300 transition duration-300">&larr; Back</button>
+                                    <button id="calculate-price" class="bg-green-600 text-white rounded-lg px-6 py-3 font-bold text-lg hover:bg-green-700 transition duration-300 w-full md:w-auto">Calculate My Car's Value</button>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                     <!-- Loader -->
                     <div id="loader" class="hidden flex flex-col items-center justify-center p-8">
@@ -330,13 +337,22 @@
                 <h2 class="text-3xl font-bold mb-2">Brands We Cover</h2>
                 <p class="text-gray-600 mb-12">Click a logo to start your valuation instantly.</p>
                 <div class="flex flex-wrap justify-center items-center gap-x-8 md:gap-x-12 gap-y-8">
-                    <img src="https://cdn.simpleicons.org/marutisuzuki/1E4E9C" alt="Maruti Suzuki Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Maruti Suzuki" data-brand="Maruti Suzuki">
+                    <img src="https://logo.clearbit.com/marutisuzuki.com?greyscale=false" alt="Maruti Suzuki Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Maruti Suzuki" data-brand="Maruti Suzuki">
                     <img src="https://cdn.simpleicons.org/hyundai/002C5F" alt="Hyundai Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Hyundai" data-brand="Hyundai">
-                    <img src="https://cdn.simpleicons.org/tatamotors/003359" alt="Tata Motors Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Tata" data-brand="Tata">
+                    <img src="https://logo.clearbit.com/tatamotors.com?greyscale=false" alt="Tata Motors Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Tata" data-brand="Tata">
                     <img src="https://cdn.simpleicons.org/mahindra/E52221" alt="Mahindra Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Mahindra" data-brand="Mahindra">
                     <img src="https://cdn.simpleicons.org/kia/000000" alt="Kia Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Kia" data-brand="Kia">
                     <img src="https://cdn.simpleicons.org/toyota/EB0A1E" alt="Toyota Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Toyota" data-brand="Toyota">
                     <img src="https://cdn.simpleicons.org/honda/E4002B" alt="Honda Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Honda" data-brand="Honda">
+                    <!-- New Brands Added -->
+                    <img src="https://cdn.simpleicons.org/renault/FFCC00" alt="Renault Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Renault" data-brand="Renault">
+                    <img src="https://cdn.simpleicons.org/ford/003366" alt="Ford Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Ford" data-brand="Ford">
+                    <img src="https://cdn.simpleicons.org/volkswagen/00337f" alt="Volkswagen Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Volkswagen" data-brand="Volkswagen">
+                    <img src="https://cdn.simpleicons.org/skoda/00803f" alt="Skoda Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Skoda" data-brand="Skoda">
+                    <!-- New Brands Added -->
+                    <img src="https://cdn.simpleicons.org/mg/CC0000" alt="MG Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="MG" data-brand="MG">
+                    <img src="https://cdn.simpleicons.org/bmw/0066B2" alt="BMW Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="BMW" data-brand="BMW">
+                    <img src="https://cdn.simpleicons.org/nissan/c3002f" alt="Nissan Logo" class="h-10 md:h-12 object-contain transition-transform duration-300 transform hover:scale-110 cursor-pointer brand-logo" title="Nissan" data-brand="Nissan">
                 </div>
              </div>
         </section>
@@ -402,6 +418,41 @@ document.addEventListener('DOMContentLoaded', function () {
         'Honda': {
             'City': ['V', 'VX', 'ZX'],
             'Amaze': ['E', 'S', 'VX']
+        },
+        'Renault': {
+            'Kwid': ['RXE', 'RXT', 'Climber'],
+            'Triber': ['RXE', 'RXT', 'RXZ'],
+            'Kiger': ['RXE', 'RXT', 'RXZ', 'RXZ Turbo']
+        },
+        'Ford': {
+            'EcoSport': ['Ambiente', 'Trend', 'Titanium', 'Titanium+', 'S'],
+            'Figo': ['Ambiente', 'Titanium', 'Titanium Blu'],
+            'Aspire': ['Ambiente', 'Titanium', 'Titanium+']
+        },
+        'Volkswagen': {
+            'Polo': ['Trendline', 'Comfortline', 'Highline', 'Highline Plus', 'GT'],
+            'Vento': ['Trendline', 'Comfortline', 'Highline', 'Highline Plus'],
+            'Taigun': ['Comfortline', 'Highline', 'Topline', 'GT']
+        },
+        'Skoda': {
+            'Rapid': ['Rider', 'Ambition', 'Onyx', 'Style', 'Monte Carlo'],
+            'Kushaq': ['Active', 'Ambition', 'Style'],
+            'Slavia': ['Active', 'Ambition', 'Style']
+        },
+        'MG': {
+            'Hector': ['Style', 'Shine', 'Smart', 'Sharp'],
+            'Gloster': ['Sharp', 'Savvy', 'Blackstorm'],
+            'Astor': ['Style', 'Super', 'Smart', 'Sharp']
+        },
+        'BMW': {
+            '3 Series': ['330i Sport', '330i M Sport', 'M340i xDrive'],
+            '5 Series': ['530i M Sport', '520d Luxury Line'],
+            'X1': ['sDrive18i xLine', 'sDrive18d M Sport'],
+            'X3': ['xDrive30i SportX', 'xDrive20d Luxury Line']
+        },
+        'Nissan': {
+            'Magnite': ['XE', 'XL', 'XV', 'XV Premium', 'Kuro Edition'],
+            'Kicks': ['XL', 'XV', 'XV Premium']
         }
     };
 
@@ -412,7 +463,16 @@ document.addEventListener('DOMContentLoaded', function () {
         'Scorpio': 1200000, 'XUV700': 1500000, 'Thar': 1300000, 'XUV300': 800000,
         'Seltos': 950000, 'Sonet': 750000, 'Carens': 1000000,
         'Fortuner': 2500000, 'Innova Crysta': 1600000, 'Glanza': 620000,
-        'City': 850000, 'Amaze': 550000
+        'City': 850000, 'Amaze': 550000,
+        // New Prices Added
+        'Kwid': 300000, 'Triber': 500000, 'Kiger': 600000,
+        'EcoSport': 700000, 'Figo': 450000, 'Aspire': 500000,
+        'Polo': 550000, 'Vento': 650000, 'Taigun': 1000000,
+        'Rapid': 600000, 'Kushaq': 950000, 'Slavia': 900000,
+        // New Prices Added
+        'Hector': 1400000, 'Gloster': 2800000, 'Astor': 950000,
+        '3 Series': 2800000, '5 Series': 3500000, 'X1': 2200000, 'X3': 3200000,
+        'Magnite': 550000, 'Kicks': 850000
     };
 
 
@@ -571,20 +631,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function resetForm() {
-        // Hide results, show form
         resultsContainer.classList.add('hidden');
         formContainer.classList.remove('hidden');
-
-        // Reset form inputs
         document.getElementById('prediction-form').reset();
-        
-        // Reset dynamic dropdowns and logos
         populateModels(); 
-
-        // Reset to first step
         navigateToStep(0);
-        
-        // Hide Gemini output
         geminiOutputContainer.classList.add('hidden');
     }
     
@@ -659,7 +710,21 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // City factor (simplified)
-        const cityFactors = { 'Mumbai': 1.05, 'Bangalore': 1.03, 'Delhi': 1.02 };
+        const cityFactors = { 
+            'Mumbai': 1.05, 
+            'Bangalore': 1.03, 
+            'Delhi': 1.02,
+            'Chennai': 1.02,
+            'Kolkata': 1.02,
+            'Hyderabad': 1.02,
+            'Pune': 1.01,
+            'Ahmedabad': 1.01,
+            'Lucknow': 1.01,
+            'Kanpur': 1.01,
+            'Patna': 1.01,
+            'Jaipur': 1.01
+            // Padrauna & Gangtok will default to 1
+        };
         price *= (cityFactors[details.city] || 1);
 
         currentCarBoosters = boosters;
@@ -762,4 +827,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </body>
 </html>
-
