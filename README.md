@@ -3,7 +3,7 @@ PricePilot.ai is a modern, responsive, and user-friendly web application designe
 
 🌐 Live Demo:-
 
-You can view a live version of the project here: https://g.co/gemini/share/c32bedeee517
+You can view a live version of the project here: https://gemini.google.com/share/2aaf44e1d6b8
 
 ✨ Key Features:-
 
